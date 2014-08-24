@@ -1,0 +1,266 @@
+doctype html
+html(lang='en')
+head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title authr example express app
+    link(href="stylesheets/prettify.css", rel="stylesheet")
+    link(href="stylesheets/style.css", rel="stylesheet")
+
+body
+    .navbar.navbar-inverse
+        .container
+            .navbar-header
+                button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+                    span.icon-bar
+                    span.icon-bar
+                    span.icon-bar
+                a.navbar-brand(href='#') authr
+            .collapse.navbar-collapse
+                ul.nav.navbar-nav
+                    li.active
+                        a(href='#') Home
+                    li
+                        a(href="https://github.com/jtowers/authr") Project
+    .container
+      .row
+        .jumbotron
+          h1 hello, 
+           span#header-username authr
+          p#sub1 Example functionality for authr using express and passportjs
+          p#sub2 Use the examples below to sign up, verify an account, log in, reset your password, or delete an account
+      .row
+        .div.container
+          div.row
+            div.col-lg-6
+              h2 Signup
+              form.form-horizontal#signup
+                fieldset
+                  div.form-group
+                    label.col-lg-2.control-label(for="username") Username
+                    div.col-lg-10
+                      input.form-control#signupun(type="text",placeholder="username",name="username")
+                  div.form-group
+                      label.col-lg-2.control-label(for="password") Password
+                      div.col-lg-10
+                        input.form-control#signuppw(type="password", placeholder="password",name="password")
+                  div.form-group
+                    div.col-sm-offset-2.col-sm-6
+                        button.btn.btn-primary(type="submit") Submit
+                  div.form-group
+                      div.col-sm-offset-2.col-sm-10
+                          span#signup-message.help-block
+            div.col-lg-6
+              h2 Code
+              pre.prettyprint
+                  p app.post('/signup', function(req, res){
+                  p   body = req.body;
+                  p   var signup = {
+                  p       username: body.username,
+                  p       password: body.password
+                  p   };
+                  p   authr.signUp(signup, function(err, user){
+                  p       if(err){
+                  p           console.log('error: ' + err);
+                  p           res.status(400).json(err);
+                  p       } else {
+                  p           res.status(200).json(user);
+                  p           console.log('user: '+ user);
+                  p         }
+                  p   });
+                  p });
+         div.row
+           div.col-lg-6
+              h2 Verify Email Address
+              form.form-horizontal#verify
+                fieldset
+                  div.form-group
+                    label.col-lg-2.control-label(for="signuptoken") Token
+                    div.col-lg-10
+                      input.form-control#signuptoken(type="text", placeholder="Sign up to generate token")
+                  div.form-group
+                    div.col-sm-offset-2.col-sm-6
+                        button.btn.btn-primary(type="submit") Submit
+                  div.form-group
+                      div.col-sm-offset-2.col-sm-10
+                          span#verification-message.help-block
+            div.col-lg-6
+              h2 Code
+              pre.prettyprint
+                  p  app.post('/verifyToken', function(req, res){
+                  p    var token = req.body.token;
+                  p    authr.verifyEmail(token, function(err, user){
+                  p      if(err){
+                  p          res.status(400).json(err);
+                  p      } else {
+                  p          res.status(200).json(user);
+                  p        }
+                  p    });
+                  p });
+         div.row
+           div.col-lg-6
+              h2 Login
+              form.form-horizontal#login
+                fieldset
+                  div.form-group
+                    label.col-lg-2.control-label(for="username") Username
+                    div.col-lg-10
+                      input.form-control#loginun(type="text",placeholder="username",name="username")
+                  div.form-group
+                      label.col-lg-2.control-label(for="password") Password
+                      div.col-lg-10
+                        input.form-control#loginpw(type="password", placeholder="password",name="password")
+                  div.form-group
+                    div.col-sm-offset-2.col-sm-6
+                        button.btn.btn-primary(type="submit") Submit
+                  div.form-group
+                      div.col-sm-offset-2.col-sm-10
+                          span#login-message.help-block
+           div.col-lg-6
+             h2 Code
+             pre.prettyprint.lang-js
+                 p app.post('/login', function(req, res){ 
+                 p   var login = {
+                 p     username: req.body.username,
+                 p     password: req.body.password
+                 p   };
+                 p   authr.login(login, function(err, user){
+                 p     if(err){
+                 p       res.status(400).json(err);
+                 p     } else {
+                 p         /* Give the user to Passport for session management */
+                 p         req.login(user, function(err){
+                 p           if(err){
+                 p             res.status(400).json(err);
+                 p           } else {
+                 p               res.status(200).json(req.user);
+                 p             }
+                 p         });
+                 p       }
+                 p   });
+                 p });
+         div.row
+           div.col-lg-6
+              h2 Request a password reset token
+              form.form-horizontal#requesttoken
+                fieldset
+                  div.form-group
+                    label.col-lg-2.control-label(for="username") Username
+                    div.col-lg-10
+                      input.form-control#tokenun(type="text",placeholder="username",name="username")
+                  div.form-group
+                    div.col-sm-offset-2.col-sm-6
+                        button.btn.btn-primary(type="submit") Submit
+                  div.form-group
+                      div.col-sm-offset-2.col-sm-10
+                          span#reset-message.help-block
+           div.col-lg-6
+             h2 Code
+             pre.prettyprint.lang-js
+                 p app.post('/createResetToken', function(req, res){
+                 p   authr.createPasswordResetToken(req.body.username, function(err, user){
+                 p     if(err){
+                 p       res.status(400).json(err);
+                 p      } else {
+                 p          res.status(200).json(user);
+                 p        }
+                 p   });
+                 p  });
+         div.row
+           div.col-lg-6
+              h2 Submit password reset token
+              form.form-horizontal#reset_token
+                fieldset
+                  div.form-group
+                    label.col-lg-2.control-label(for="token") Token
+                    div.col-lg-10
+                      input.form-control#resettoken(type="text",placeholder="token",name="token")
+                  div.form-group
+                    div.col-sm-offset-2.col-sm-6
+                        button.btn.btn-primary(type="submit") Submit
+                  div.form-group
+                      div.col-sm-offset-2.col-sm-10
+                          span#token-message.help-block
+           div.col-lg-6
+             h2 Code
+             pre.prettyprint.lang-js
+              p app.get('/verifyToken/:token', function(req, res){
+              p  authr.verifyPasswordResetToken(req.params.token, function(err, user){
+              p    if(err){
+              p      res.status(400).json(err);
+              p    } else {
+              p        res.status(200).json(user);
+              p      }
+              p  });
+              p });
+        div.row
+           div.col-lg-6
+              h2 Reset password
+              form.form-horizontal#resetpassword
+                fieldset
+                  div.form-group
+                    label.col-lg-2.control-label(for="token") Token
+                    div.col-lg-10
+                      input.form-control#pwtoken(type="text",placeholder="token",name="token", disabled)
+                  div.form-group
+                      label.col-lg-2.control-label(for="password") Password
+                      div.col-lg-10
+                        input.form-control#resetpw(type="password", placeholder="password",name="password")
+                  div.form-group
+                    div.col-sm-offset-2.col-sm-6
+                        button.btn.btn-primary(type="submit") Submit
+                  div.form-group
+                      div.col-sm-offset-2.col-sm-10
+                          span#resetpw-message.help-block
+           div.col-lg-6
+             h2 Code
+             pre.prettyprint.lang-js
+              p app.post('/verifyToken/:token', function(req, res){
+              p   authr.updatePassword(req.params.token, req.body.email, function(err, user){
+              p     if(err){
+              p       res.status(400).json(err);
+              p     } else {
+              p         res.status(200).json(user);
+              p       }
+              p   });
+              p });
+         div.row
+           div.col-lg-6
+              h2 Delete Account
+              form.form-horizontal#delete
+                fieldset
+                  div.form-group
+                    label.col-lg-2.control-label(for="username") Username
+                    div.col-lg-10
+                      input.form-control#deleteun(type="text",placeholder="username",name="token")
+                  div.form-group
+                      label.col-lg-2.control-label(for="password") Password
+                      div.col-lg-10
+                        input.form-control#deletepw(type="password", placeholder="password",name="password")
+                  div.form-group
+                    div.col-sm-offset-2.col-sm-6
+                        button.btn.btn-primary(type="submit") Submit
+                  div.form-group
+                      div.col-sm-offset-2.col-sm-10
+                          span#delete-message.help-block
+           div.col-lg-6
+             h2 Code
+             pre.prettyprint.lang-js
+              p app.post('/delete', function(req, res){
+              p      var body = req.body;
+              p      login = {
+              p          username: req.body.username,
+              p          password: req.body.password
+              p      };
+              p      authr.deleteAccount(login, function(err, user){
+              p         if(err){
+              p             res.status(400).json(err);
+              p         } else {
+              p             res.status(200).json(user);
+              p         }
+              p      });
+              p  });
+script(src='javascripts/jquery.js')
+script(src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
+script(src="javascripts/prettify.js")
+script(src="javascripts/examples.js")
