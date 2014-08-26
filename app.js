@@ -16,7 +16,15 @@ var app = express();
 
 // Create a new instance of authr with the default configuration
 var Authr = require('authr');
-var authr = new Authr();
+var authr = new Authr( {
+    db: {
+        type: 'mongodb',
+        host: 'localhost',
+        port: 27017,
+        database_name: 'some_db',
+        collection: 'some_collection'
+    }
+});
 
 // setup views for express
 app.set('views', path.join(__dirname, 'views'));
@@ -48,19 +56,18 @@ passport.serializeUser(function (user, done) {
 // Deserialize user for passport
 passport.deserializeUser(function (id, done) {
     // Run a query using the database adapter that authr is using
-    authr.config.Adapter.db.findOne({_id:id}, function (err, user) {
-        if (err) {
-            done(err);
+    authr.config.Adapter.isValueTaken({_id:id.toString()}, '_id', function(err, user){
+        if(err){
+            throw err;
+        } else {
+            done(null, user);
         }
-        console.log(user);
-        done(null, user);
     });
 });
 
 
 // Check to see if there is a user in session
 function loggedIn(req, res, next) {
-    console.log(req.user);
     if (req.user) {
         if (req.method === 'HEAD' || req.method === 'OPTIONS') {
             next();
@@ -183,6 +190,11 @@ app.post('/delete', function(req, res){
            res.status(200).json(user);
        }
     });
+});
+
+app.post('/updateAuthr', function(req, res){
+   authr = new Authr(req.body.config);
+    res.status(200);
 });
 
 // SERVER

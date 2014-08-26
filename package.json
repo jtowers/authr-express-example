@@ -1,6 +1,6 @@
 {
   "name": "authr-example",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -16,6 +16,9 @@
     "passport-local": "~1.0.0",
     "passport": "~0.2.0",
     "authr": "~0.X.X",
+      "authr-mongo": "~1.X.X",
+      "authr-sql": "~0.X.X",
+      "sqlite3": "*",
     "express-session": "~1.7.6"
   }
 }
